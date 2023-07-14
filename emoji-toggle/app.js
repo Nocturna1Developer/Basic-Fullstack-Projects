@@ -1,6 +1,5 @@
 // Simply toggles different emojis
 
-
 // Shift + 1 auto imports everything from index
 // Shift + alt + down to paste the same line again
 
