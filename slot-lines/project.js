@@ -39,8 +39,6 @@ const deposit = () => {
     }
 }
 
-// The player's current balance is the amount they deposited
-let balance = deposit();
 
 // Function to handle the player choosing how many lines to bet on
 const getNumberLines = () => {
@@ -59,7 +57,6 @@ const getNumberLines = () => {
         }
     }
 }
-const numberOfLines = getNumberLines();
 
 // Function to handle the player choosing how much to bet
 const getBetAmount = (balance, lines) => {
@@ -78,7 +75,6 @@ const getBetAmount = (balance, lines) => {
         }
     }
 }
-const betAmount = getBetAmount(balance, numberOfLines);
 
 // Function to simulate spinning the slot machine
 const spin = () => {
@@ -120,30 +116,65 @@ const spin = () => {
 }
 
 
+// Transpose the 2D reels array to convert it from a column-based format to a row-based format.
 const transpose = (reels) => {
+    // Define an empty array to hold the rows
     const rows = [];
+    // Loop over each slot (row) in the current reel
     for (let i = 0; i < ROWS; i++) {
+        // Initialize a new row as an empty array
         rows.push([]);
+        // Loop over each reel (column)
         for (let j = 0; j < COLS; j++) {
+            // Push the symbol from the jth reel and ith slot to the ith row
             rows[i].push(reels[j][i])
         }
     }
 }
-const rows = transpose(reels);
 
+// Print the rows of symbols, with "|" between each symbol for visual separation
 const printRows = (rows) => {
+    // Loop over each row
     for (const row of rows) {
+        // Initialize an empty string to hold the symbols in this row
         let rowString = " ";
-        for (const [i, symbol] of rows.entires()) {
+        // Loop over each symbol in this row, along with its index
+        for (const [i, symbol] of row.entries()) {
+            // Add the current symbol to the row string
             rowString += symbol
-            if (i != rows.length - 1) {
-                roewString += " | "
+            // If we're not at the last symbol, add a " | " for visual separation
+            if (i != row.length - 1) {
+                rowString += " | "
             }
         }
+        // Print the row string
         console.log(rowString);
     }
 }
-printRows(rows);
 
-// Spin the slot machine
-const reels = spin();
+// Calculate the winnings based on the bet amount, number of lines, and the symbols in the rows
+const getWinnings = (rows, bet, lines) => {
+    // Initialize winnings as 0
+    let winnings = 0
+    // Only consider the number of lines that the player bet on
+    for (let row = 0; row < lines; row++) {
+        // Get the symbols in the current row
+        const symbols = rows[row];
+        // Initialize a boolean flag as true, to indicate if all symbols in this row are the same
+        let allSame = true;
+        // Loop over each symbol in this row
+        for (const symbol of symbols) {
+            // If the current symbol is different from the first symbol, set the flag to false and break the loop
+            if (symbol != symbols[0]) {
+                allSame = false;
+                break;
+            }
+        }
+        // If all symbols in this row are the same, increase winnings by the bet amount times the value of the symbol
+        if (allSame) {
+            winnings += bet * SYMBOLS_MULTIPLIER[symbols[0]]
+        }
+        // Return the winnings for this game
+        return winnings;
+    }
+}
